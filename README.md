@@ -1,6 +1,6 @@
 # Nuxt 3 Dashboard 
 
-A modern, fully responsive admin dashboard built with Nuxt 3, Tailwind CSS, and Pinia.
+A modern, fully responsive dashboard built with Nuxt 3, Tailwind CSS, and Pinia.
 
 ## Features
 
