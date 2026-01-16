@@ -6,7 +6,12 @@
 
     <div class="hidden md:flex items-center gap-2 px-3 py-2 rounded-full bg-slate-950/50 border border-white/10 w-64 focus-within:border-indigo-500/50 focus-within:ring-1 focus-within:ring-indigo-500/50 transition-all">
       <Search class="w-4 h-4 text-slate-500" />
-      <input type="text" placeholder="Search..." class="bg-transparent border-none outline-none text-sm text-white placeholder-slate-600 w-full" />
+      <input 
+        v-model="store.searchQuery" 
+        type="text" 
+        placeholder="Search team..." 
+        class="bg-transparent border-none outline-none text-sm text-white placeholder-slate-600 w-full" 
+      />
     </div>
 
     <div class="flex items-center gap-4 relative">
@@ -49,7 +54,9 @@
 
 <script setup>
 import { Menu, Search, Bell } from 'lucide-vue-next'
+import { useAppStore } from '~/stores/appStore'
 
+const store = useAppStore()
 const showNotifications = ref(false)
 
 const notifications = [
