@@ -6,7 +6,10 @@
         <p class="text-slate-400">Traffic sources and user engagement.</p>
       </div>
       <div class="flex gap-2">
-        <button class="px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg text-sm font-medium border border-white/10 transition-colors">
+        <button 
+          @click="downloadCSV"
+          class="px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg text-sm font-medium border border-white/10 transition-colors"
+        >
           Download CSV
         </button>
       </div>
@@ -118,4 +121,27 @@ const data30d = [15, 20, 25, 40, 30, 45, 35, 30, 50, 60, 55, 40]
 const chartData = computed(() => {
   return selectedPeriod.value === '7d' ? data7d : data30d
 })
+
+const downloadCSV = () => {
+  const headers = ['Data Point', 'Value']
+  
+  const rows = chartData.value.map((value, index) => {
+    return [`Point ${index + 1}`, value]
+  })
+  
+  const csvContent = [
+    headers.join(','), 
+    ...rows.map(row => row.join(','))
+  ].join('\n')
+  
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.setAttribute('href', url)
+  link.setAttribute('download', `analytics_report_${selectedPeriod.value}.csv`)
+  link.style.visibility = 'hidden'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
 </script>
