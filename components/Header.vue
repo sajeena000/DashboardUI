@@ -32,7 +32,7 @@
           <span class="text-xs bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full">3 New</span>
         </div>
         
-        <div class="max-h-64 overflow-y-auto">
+        <div class="max-h-64 overflow-y-auto custom-scrollbar">
           <div v-for="(notif, index) in notifications" :key="index" class="p-4 border-b border-white/5 hover:bg-white/5 cursor-pointer transition-colors flex gap-3">
             <div class="mt-1">
               <div class="w-2 h-2 rounded-full" :class="notif.color"></div>
@@ -66,3 +66,19 @@ const notifications = [
   { text: 'Weekly report is ready', time: 'Yesterday', color: 'bg-slate-500' },
 ]
 </script>
+
+<style scoped>
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px; 
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155; 
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+</style>

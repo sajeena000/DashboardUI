@@ -25,7 +25,7 @@ export const useAppStore = defineStore('app', {
 
   actions: {
     initStore() {
-      if (process.client) { 
+      if (import.meta.client) { 
         const savedState = localStorage.getItem('dashboard-state')
         if (savedState) {
           const parsed = JSON.parse(savedState)
@@ -37,7 +37,7 @@ export const useAppStore = defineStore('app', {
     },
     
     saveState() {
-      if (process.client) {
+      if (import.meta.client) {
         localStorage.setItem('dashboard-state', JSON.stringify({
           userProfile: this.userProfile,
           team: this.team,
@@ -64,6 +64,14 @@ export const useAppStore = defineStore('app', {
         ...member
       })
       this.saveState() 
+    },
+
+    editTeamMember(updatedMember: any) {
+      const index = this.team.findIndex(m => m.id === updatedMember.id)
+      if (index !== -1) {
+        this.team[index] = { ...this.team[index], ...updatedMember }
+        this.saveState()
+      }
     },
 
     removeTeamMember(email: string) {
