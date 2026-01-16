@@ -7,7 +7,14 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <StatCard title="Total Revenue" value="$45,231" :trend="12.5" :icon="DollarSign" />
-      <StatCard title="Active Users" value="2,450" :trend="8.2" :icon="Users" />
+      
+      <StatCard 
+        title="Team Members" 
+        :value="store.totalTeamCount" 
+        :trend="8.2" 
+        :icon="Users" 
+      />
+      
       <StatCard title="Bounce Rate" value="42.3%" :trend="-2.1" :icon="Activity" />
       <StatCard title="Active Sessions" value="12m 30s" :trend="4.5" :icon="Clock" />
     </div>
@@ -49,6 +56,9 @@
 
 <script setup>
 import { DollarSign, Users, Activity, Clock } from 'lucide-vue-next'
+import { useAppStore } from '~/stores/appStore'
+
+const store = useAppStore()
 
 const selectedPeriod = ref('7d')
 const data7d = [35, 45, 30, 60, 75, 50, 65, 80, 70, 45, 90, 60]

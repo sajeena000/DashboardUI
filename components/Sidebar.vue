@@ -22,19 +22,40 @@
 
     <div class="p-4 border-t border-white/5">
       <div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/5">
-        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" class="w-8 h-8 rounded-full bg-slate-700" />
+        <img 
+          :src="`https://api.dicebear.com/7.x/avataaars/svg?seed=${store.userProfile.name}`" 
+          alt="User" 
+          class="w-8 h-8 rounded-full bg-slate-700" 
+        />
         <div class="flex-1 min-w-0">
-          <p class="text-sm font-medium text-white truncate">Intern Dev</p>
-          <p class="text-xs text-slate-500 truncate">dev@dashboard.com</p>
+          <p class="text-sm font-medium text-white truncate">{{ store.userProfile.name }}</p>
+          <p class="text-xs text-slate-500 truncate">{{ store.userProfile.email }}</p>
         </div>
+
+        <button 
+          @click="handleLogout" 
+          class="p-1 text-slate-500 hover:text-rose-400 transition-colors"
+          title="Sign Out"
+        >
+          <LogOut class="w-4 h-4" />
+        </button>
       </div>
     </div>
   </aside>
 </template>
 
 <script setup>
-import { Home, PieChart, Settings, Users } from 'lucide-vue-next'
+import { Home, PieChart, Settings, Users, LogOut } from 'lucide-vue-next'
+import { useAppStore } from '~/stores/appStore'
+
 const route = useRoute()
+const router = useRouter()
+const store = useAppStore() 
+
+const handleLogout = () => {
+  store.logout()
+  router.push('/login')
+}
 
 const links = [
   { name: 'Dashboard', path: '/', icon: Home },
