@@ -13,7 +13,7 @@ export default defineNuxtConfig({
     display: 'swap'
   },
   app: {
-    baseURL: '/DashboardUI/',
+    baseURL: '/dashboard-ui/',
     head: {
       title: 'The Dashboard',
       bodyAttrs: {
