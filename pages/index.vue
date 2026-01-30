@@ -42,10 +42,10 @@
       <div class="p-6 rounded-2xl bg-slate-900/40 border border-white/5 backdrop-blur-sm">
         <h2 class="text-lg font-display font-semibold text-white mb-6">Recent Activity</h2>
         
-        <div class="space-y-6">
+        <div class="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
           <div v-for="activity in store.activities" :key="activity.id" class="flex gap-4 items-start">
             <div 
-              class="w-2 h-2 mt-2 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.2)]"
+              class="w-2 h-2 mt-2 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.2)] shrink-0"
               :class="{
                 'bg-indigo-500': activity.type === 'info',
                 'bg-emerald-500': activity.type === 'success',
@@ -77,10 +77,27 @@ import { useAppStore } from '~/stores/appStore'
 const store = useAppStore()
 
 const selectedPeriod = ref('7d')
-const data7d = [35, 45, 30, 60, 75, 50, 65, 80, 70, 45, 90, 60]
-const data30d = [20, 25, 40, 30, 45, 35, 30, 50, 60, 55, 40, 30]
+
+// Reactive data storage with defaults
+const data7d = ref([35, 45, 30, 60, 75, 50, 65, 80, 70, 45, 90, 60])
+const data30d = ref([20, 25, 40, 30, 45, 35, 30, 50, 60, 55, 40, 30])
+
+// Fetch data from API on mount
+const fetchData = async () => {
+  try {
+    const response = await $fetch('/api/revenue')
+    data7d.value = response['7d']
+    data30d.value = response['30d']
+  } catch (error) {
+    console.error('Failed to fetch revenue data:', error)
+  }
+}
+
+onMounted(() => {
+  fetchData()
+})
 
 const chartData = computed(() => {
-  return selectedPeriod.value === '7d' ? data7d : data30d
+  return selectedPeriod.value === '7d' ? data7d.value : data30d.value
 })
 </script>

@@ -60,6 +60,32 @@
       <div class="h-64 w-full">
         <SimpleChart :data="chartData" />
       </div>
+      
+      <div class="mt-4 pt-4 border-t border-white/5">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-xs text-slate-500">Edit values (0-100%)</p>
+          <span v-if="saving" class="text-xs text-indigo-400">Saving...</span>
+          <span v-else-if="saved" class="text-xs text-emerald-400">✓ Saved</span>
+        </div>
+        <div class="flex items-end justify-between gap-2">
+          <div 
+            v-for="(value, index) in chartData" 
+            :key="index"
+            class="flex-1 flex flex-col items-center"
+          >
+            <input
+              type="number"
+              :value="value"
+              @blur="(e) => updateValue(index, e.target.value)"
+              @keydown.enter="(e) => { e.target.blur() }"
+              min="0"
+              max="100"
+              class="w-full bg-slate-950 border border-white/10 rounded text-xs text-center text-slate-300 py-1 outline-none focus:border-indigo-500 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              :placeholder="index + 1"
+            />
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -115,12 +141,60 @@ const sources = [
 ]
 
 const selectedPeriod = ref('7d')
-const data7d = [35, 45, 30, 60, 75, 50, 65, 80, 70, 45, 90, 60]
-const data30d = [15, 20, 25, 40, 30, 45, 35, 30, 50, 60, 55, 40]
+const saving = ref(false)
+const saved = ref(false)
+
+const data7d = ref([35, 45, 30, 60, 75, 50, 65, 80, 70, 45, 90, 60])
+const data30d = ref([15, 20, 25, 40, 30, 45, 35, 30, 50, 60, 55, 40])
+
+const fetchData = async () => {
+  try {
+    const response = await $fetch('/api/revenue')
+    data7d.value = response['7d']
+    data30d.value = response['30d']
+  } catch (error) {
+    console.error('Failed to fetch revenue data:', error)
+  }
+}
+
+onMounted(() => {
+  fetchData()
+})
 
 const chartData = computed(() => {
-  return selectedPeriod.value === '7d' ? data7d : data30d
+  return selectedPeriod.value === '7d' ? data7d.value : data30d.value
 })
+
+const updateValue = async (index, newValue) => {
+  const value = Math.max(0, Math.min(100, parseInt(newValue) || 0))
+  
+  if (selectedPeriod.value === '7d') {
+    data7d.value[index] = value
+  } else {
+    data30d.value[index] = value
+  }
+  
+  // Save to backend
+  saving.value = true
+  saved.value = false
+  
+  try {
+    await $fetch('/api/revenue', {
+      method: 'POST',
+      body: {
+        period: selectedPeriod.value,
+        dataIndex: index,
+        value
+      }
+    })
+    saved.value = true
+    setTimeout(() => { saved.value = false }, 2000)
+  } catch (error) {
+    console.error('Failed to save:', error)
+  } finally {
+    saving.value = false
+  }
+}
 
 const downloadCSV = () => {
   const headers = ['Data Point', 'Value']
