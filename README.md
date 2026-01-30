@@ -1,31 +1,44 @@
-# Nuxt 3 Dashboard 
+# Dashboard UI
 
-A modern, fully responsive dashboard built with Nuxt 3, Tailwind CSS, and Pinia.
+A modern admin dashboard built with **Nuxt 4**, **Vue 3**, and **PostgreSQL**.
+
+## Tech Stack
+
+- **Frontend:** Nuxt 4, Vue 3, Tailwind CSS, Pinia
+- **Backend:** Nuxt Server API, Drizzle ORM
+- **Database:** PostgreSQL
+- **Icons:** Lucide Vue
 
 ## Features
 
-- **Authentication**: Secure Login/Logout flow with Route Guard Middleware.
-- **Team Management**: Create, Read, Update, Delete (CRUD) members with Search & Status Filters.
-- **Analytics**: Interactive charts with **CSV Export** functionality.
-- **State Management**: Global state via Pinia with **LocalStorage Persistence** (data survives refresh).
-- **Activity Log**: Automated system logging for all user actions.
-- **UI/UX**: Modern dark mode "Glassmorphism" design.
-
-## 🛠️ Tech Stack
-
-- **Framework**: [Nuxt 3](https://nuxt.com/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **State**: [Pinia](https://pinia.vuejs.org/)
-- **Icons**: [Lucide Vue](https://lucide.dev/)
+- 📊 **Analytics** – Revenue trends and data visualization
+- 👥 **Team Management** – CRUD operations for team members with role-based permissions
+- 📝 **Activity Logs** – Track system events and user actions
+- 🔔 **Notifications** – Dynamic notification system
+- 🔍 **Global Search** – Search across team, activities, and settings
+- ⚙️ **Settings** – Persistent user/app configuration
 
 ## Getting Started
 
- **Install dependencies:**
-   ```bash
-   npm install
-   ```
+```bash
+# Install dependencies
+npm install
 
- **Run the development server:**
-   ```bash
-   npm run dev
-   ```
+# Set up environment variables
+cp .env.example .env
+# Add your DATABASE_URL to .env
+
+# Run database migrations
+npx drizzle-kit push
+
+# Start development server
+npm run dev
+```
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npx drizzle-kit studio` | Open Drizzle Studio |
