@@ -1,6 +1,10 @@
-import { pgTable, serial, text, boolean, timestamp, json, integer } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, boolean, timestamp, json, integer, pgEnum } from 'drizzle-orm/pg-core';
 
-// Table 1: Team Members
+// Enums
+export const clientStatus = pgEnum('client_status', ['active', 'inactive']);
+export const pricingPackage = pgEnum('pricing_package', ['Basic', 'Professional', 'Enterprise', 'Custom']);
+
+// Table 1: Team Members (with public profile support)
 export const teamMembers = pgTable('team_members', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
@@ -10,16 +14,85 @@ export const teamMembers = pgTable('team_members', {
   tags: json('tags').$type<string[]>().default([]),
   online: boolean('online').default(false),
   avatarUrl: text('avatar_url'), // For the Dicebear URL
+  // Public profile fields
+  bio: text('bio'),
+  jobTitle: text('job_title'),
+  linkedinUrl: text('linkedin_url'),
+  imageUrl: text('image_url'),
+  isPublic: boolean('is_public').default(false),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
-// Table 4: User Settings
-export const settings = pgTable('settings', {
+// Table: Clients (for retention tracking and project grouping)
+export const clients = pgTable('clients', {
   id: serial('id').primaryKey(),
-  name: text('name').notNull().default('Intern Developer'),
-  email: text('email').notNull().default('dev@dashboard.com'),
-  notifications: boolean('notifications').default(true),
-  userRole: text('user_role', { enum: ['admin', 'manager', 'member'] }).default('admin'),
+  name: text('name').notNull(),
+  email: text('email').notNull(),
+  avatar: text('avatar'),
+  status: clientStatus('status').default('active'),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+// Table 6: Blog Posts
+export const blogPosts = pgTable('blog_posts', {
+  id: serial('id').primaryKey(),
+  title: text('title').notNull(),
+  slug: text('slug').notNull().unique(),
+  excerpt: text('excerpt'),
+  content: text('content').notNull(),
+  authorId: integer('author_id'),
+  publishedAt: timestamp('published_at'),
+  coverImage: text('cover_image'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at'),
+});
+
+// Table 7: Events
+export const events = pgTable('events', {
+  id: serial('id').primaryKey(),
+  title: text('title').notNull(),
+  description: text('description'),
+  eventDate: timestamp('event_date').notNull(),
+  location: text('location'),
+  imageUrl: text('image_url'),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+// Table 8: Contact Submissions
+export const contactSubmissions = pgTable('contact_submissions', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull(),
+  phone: text('phone'),
+  subject: text('subject'),
+  message: text('message').notNull(),
+  status: text('status', { enum: ['new', 'in-progress', 'resolved'] }).default('new'),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+// Table 9: Projects (modified with client_id FK, start_date, pricing_package)
+export const projects = pgTable('projects', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  clientId: integer('client_id').notNull(),
+  projectType: text('project_type', { enum: ['Web', 'Mobile', 'AI', 'DevOps', 'Consulting', 'Other'] }).notNull(),
+  pricingPackage: pricingPackage('pricing_package').default('Basic'),
+  value: integer('value').default(0),
+  status: text('status', { enum: ['pending', 'active', 'completed', 'cancelled'] }).default('pending'),
+  description: text('description'),
+  startDate: timestamp('start_date').defaultNow(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+// Table 4: Admin Users (for authentication)
+export const admins = pgTable('admins', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull().unique(),
+  passwordHash: text('password_hash').notNull(),
+  isPrimary: boolean('is_primary').default(false), // Only the seeded admin
+  allowRegistration: boolean('allow_registration').default(false), // Only settable by primary
+  createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
 
