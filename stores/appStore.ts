@@ -107,7 +107,8 @@ export const useAppStore = defineStore('app', {
           $fetch('/api/activities'),
           $fetch('/api/notifications')
         ])
-        this.team = teamData
+        // Handle paginated response for team
+        this.team = (teamData as any).data ? (teamData as any).data : teamData
         this.activities = activityData
         this.notifications = notificationsData
       } catch (e) {

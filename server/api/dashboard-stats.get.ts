@@ -1,5 +1,5 @@
 import { db } from '../utils/db'
-import { projects, contactSubmissions, clients } from '../database/schema'
+import { projects, contactSubmissions, clients, teamMembers } from '../database/schema'
 import { eq, sql, inArray } from 'drizzle-orm'
 
 interface RevenueTrendPoint {
@@ -21,11 +21,6 @@ export default defineEventHandler(async () => {
     .where(eq(projects.status, 'active'))
 
   // 3. Total Revenue (sum of value from active + completed projects)
-  // Usually revenue is realized from completed or active projects.
-  // Matching analytics page logic which uses active + completed for some stats,
-  // but let's check what fits "Total Revenue" best.
-  // Analytics page "Avg Contract" uses active+completed.
-  // I will use active+completed for Total Revenue to show realized/in-flight value.
   const [revenueResult] = await db
     .select({ total: sql<number>`coalesce(sum(${projects.value}), 0)` })
     .from(projects)
@@ -37,7 +32,12 @@ export default defineEventHandler(async () => {
     .from(contactSubmissions)
     .where(eq(contactSubmissions.status, 'new'))
 
-  // 5. Revenue Trends (Last 12 Months) - Copied from analytics-stats.get.ts
+  // 5. Total Team Members
+  const [teamResult] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(teamMembers)
+
+  // 6. Revenue Trends (Last 12 Months) 
   const revenueTrendsData = await db
     .select({
       month: sql<string>`TO_CHAR(${projects.startDate}, 'YYYY-MM')`,
@@ -72,6 +72,7 @@ export default defineEventHandler(async () => {
     activeCustomers: Number(customersResult?.count || 0),
     totalRevenue: Number(revenueResult?.total || 0),
     newContacts: Number(contactsResult?.count || 0),
+    totalTeamMembers: Number(teamResult?.count || 0),
     chartData,
     revenueTrends: monthlyTrends
   }
