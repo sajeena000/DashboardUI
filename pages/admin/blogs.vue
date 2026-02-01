@@ -85,6 +85,13 @@
           </div>
         </div>
       </div>
+      
+      <UiPagination 
+        v-if="totalItems > 0"
+        v-model:current-page="currentPage"
+        :total="totalItems"
+        :items-per-page="itemsPerPage"
+      />
     </div>
 
     <!-- Add/Edit Modal -->
@@ -222,6 +229,10 @@ const toastTitle = ref('')
 const toastMessage = ref('')
 const toastType = ref('success')
 
+const currentPage = ref(1)
+const totalItems = ref(0)
+const itemsPerPage = ref(10)
+
 const form = ref({
   id: null,
   title: '',
@@ -237,14 +248,26 @@ onMounted(() => {
 })
 
 const fetchPosts = async () => {
+  loading.value = true
   try {
-    posts.value = await $fetch('/api/blogs')
+    const response = await $fetch('/api/blogs', {
+      params: {
+        page: currentPage.value,
+        limit: itemsPerPage.value
+      }
+    })
+    posts.value = response.data
+    totalItems.value = response.meta.total
   } catch (error) {
     console.error('Failed to fetch posts:', error)
   } finally {
     loading.value = false
   }
 }
+
+watch(currentPage, () => {
+  fetchPosts()
+})
 
 const openModal = (post = null) => {
   if (post) {
