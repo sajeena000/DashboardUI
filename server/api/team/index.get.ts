@@ -9,6 +9,8 @@ export default defineEventHandler(async (event) => {
     const query = getQuery(event);
     const search = query.search as string;
     const status = query.status as string;
+    const role = query.role as string;
+    const isPublic = query.public as string;
 
     const conditions = [];
 
@@ -25,6 +27,18 @@ export default defineEventHandler(async (event) => {
       conditions.push(eq(teamMembers.online, true));
     } else if (status === 'offline') {
       conditions.push(eq(teamMembers.online, false));
+    }
+
+    // Filter by role (contains match)
+    if (role && role !== 'all') {
+      conditions.push(ilike(teamMembers.role, `%${role}%`));
+    }
+
+    // Filter by public visibility
+    if (isPublic === 'true') {
+      conditions.push(eq(teamMembers.isPublic, true));
+    } else if (isPublic === 'false') {
+      conditions.push(eq(teamMembers.isPublic, false));
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;

@@ -1,17 +1,32 @@
 import { db } from '../../utils/db'
 import { contactSubmissions } from '../../database/schema'
-import { desc, count, eq } from 'drizzle-orm'
+import { desc, count, eq, ilike, or, and } from 'drizzle-orm'
 import { getPaginationParams, paginateResize } from '../../utils/pagination'
 
 export default defineEventHandler(async (event) => {
   const { page, limit, offset } = getPaginationParams(event)
   const query = getQuery(event)
   const status = query.status as string
+  const search = query.search as string
 
-  let whereClause = undefined
+  const conditions = []
+
+  // Filter by status
   if (status && status !== 'all') {
-    whereClause = eq(contactSubmissions.status, status as any)
+    conditions.push(eq(contactSubmissions.status, status as any))
   }
+
+  // Search by name, email, or subject
+  if (search) {
+    const searchPattern = `%${search}%`
+    conditions.push(or(
+      ilike(contactSubmissions.name, searchPattern),
+      ilike(contactSubmissions.email, searchPattern),
+      ilike(contactSubmissions.subject, searchPattern)
+    ))
+  }
+
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined
 
   const [total] = await db.select({ count: count() }).from(contactSubmissions).where(whereClause)
 
@@ -25,3 +40,4 @@ export default defineEventHandler(async (event) => {
   
   return paginateResize(contacts, Number(total?.count || 0), page, limit)
 })
+
