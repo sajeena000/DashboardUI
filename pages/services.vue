@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="relative py-20 bg-gradient-to-br from-blue-600 to-indigo-600 dark:bg-none dark:bg-slate-950 overflow-hidden transition-colors duration-300">
+    <section class="relative py-20 bg-blue-500 dark:!bg-slate-950 overflow-hidden transition-colors duration-300">
       <div class="absolute inset-0">
         <div class="absolute top-10 left-10 w-72 h-72 bg-white/10 dark:bg-blue-500/10 rounded-full blur-3xl"></div>
       </div>
@@ -40,28 +40,27 @@
             </button>
           </div>
 
-          <!-- Pro Plan (Featured) -->
-          <div class="relative p-8 bg-slate-800 rounded-3xl shadow-2xl shadow-blue-500/10 scale-105 border border-blue-500/50">
+          <div class="relative p-8 bg-blue-600 dark:bg-slate-800 rounded-3xl shadow-2xl shadow-blue-500/20 dark:shadow-blue-500/10 scale-105 border border-blue-500/50">
             <div class="absolute top-0 right-6 -translate-y-1/2 px-4 py-1 bg-amber-400 text-slate-900 text-xs font-bold rounded-full">
               POPULAR
             </div>
             <div class="mb-6">
               <h3 class="text-xl font-display font-bold text-white mb-2">Professional</h3>
-              <p class="text-white/80 text-sm">For growing businesses with complex needs</p>
+              <p class="text-blue-100 dark:text-white/80 text-sm">For growing businesses with complex needs</p>
             </div>
             <div class="mb-6">
               <span class="text-4xl font-display font-bold text-white">$9,999</span>
-              <span class="text-white/70 text-sm">/project</span>
+              <span class="text-blue-100/70 dark:text-white/70 text-sm">/project</span>
             </div>
             <ul class="space-y-3 mb-8">
-              <li v-for="feature in proFeatures" :key="feature" class="flex items-center gap-3 text-sm text-white/90">
-                <Check class="w-5 h-5 text-emerald-300 shrink-0" />
+              <li v-for="feature in proFeatures" :key="feature" class="flex items-center gap-3 text-sm text-blue-50 dark:text-white/90">
+                <Check class="w-5 h-5 text-blue-200 dark:text-emerald-300 shrink-0" />
                 {{ feature }}
               </li>
             </ul>
             <button 
               @click="handleBuyNow('Professional')"
-              class="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500 transition-colors"
+              class="w-full py-3 bg-white dark:bg-blue-600 text-blue-600 dark:text-white rounded-xl font-semibold hover:bg-blue-50 dark:hover:bg-blue-500 transition-colors"
             >
               Get Started
             </button>
