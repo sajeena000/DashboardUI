@@ -1,1 +1,0 @@
-import{g as i,j as e}from"./Du6vl7cu.js";const a=()=>{const s=i(),r=e(()=>!0),t=e(()=>!0),o=e(()=>!0),n=e(()=>!0),c=e(()=>s.userProfile.isPrimary??!1);return{canAddMembers:r,canEditMembers:t,canRemoveMembers:o,canEditSettings:n,isPrimaryAdmin:c}};export{a as u};
